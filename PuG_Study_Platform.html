@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="de" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+    <title>PuG Master - تعلم السياسة والألمانية</title>
+    <style>
+        :root {
+            --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --text-muted: #64748b;
+            --primary: #3b82f6; --primary-hover: #2563eb; --border: #cbd5e1;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --accent1: #8b5cf6; --accent2: #ec4899;
+        }
+        [data-theme="dark"] {
+            --bg: #0f172a; --card: #1e293b; --text: #e2e8f0; --text-muted: #94a3b8;
+            --primary: #60a5fa; --primary-hover: #3b82f6; --border: #334155;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        body { background: var(--bg); color: var(--text); direction: rtl; }
+        
+        #app { max-width: 950px; margin: 0 auto; padding: 15px; padding-bottom: 100px; }
+        .hidden { display: none !important; }
+        
+        /* Animations */
+        .fade-in { animation: fadeIn 0.6s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 500px; } }
+
+        /* Header */
+        .header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; background: var(--card); padding: 15px 20px; border-radius: 20px; box-shadow: var(--shadow); margin-bottom: 20px; gap: 10px; }
+        .logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent1)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .btn-icon { background: var(--bg); border: 1px solid var(--border); padding: 8px 12px; border-radius: 12px; cursor: pointer; color: var(--text); display: flex; align-items: center; gap: 5px; font-size: 0.9rem; transition: 0.2s; }
+        .btn-icon:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        /* Stats */
+        .stats { display: flex; gap: 15px; flex-wrap: wrap; font-size: 0.85rem; padding: 10px; background: var(--bg); border-radius: 15px; }
+        .stats span { font-weight: bold; color: var(--primary); }
+
+        /* Nav */
+        .nav-bar { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 30px; }
+        .nav-btn { background: var(--card); border: none; padding: 10px 20px; border-radius: 30px; box-shadow: var(--shadow); cursor: pointer; font-weight: 600; color: var(--text); transition: 0.2s; }
+        .nav-btn:hover, .nav-btn.active { background: var(--primary); color: white; transform: translateY(-2px); box-shadow: 0 5px 10px rgba(59, 130, 246, 0.3); }
+
+        /* Sections */
+        .section-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; margin-top: 20px; }
+        .section-card { background: var(--card); padding: 20px; border-radius: 18px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; transition: 0.3s; border: 1px solid var(--border); }
+        .section-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); border-color: var(--primary); }
+        .section-card .icon { font-size: 2rem; margin-bottom: 10px; }
+        .section-card h4 { font-size: 0.95rem; }
+        .section-card.completed { border-color: #22c55e; background: rgba(34, 197, 94, 0.05); }
+
+        /* Detail Panel */
+        .detail-panel { background: var(--card); border-radius: 25px; padding: 25px; box-shadow: var(--shadow); }
+        .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
+        .tab-btn { background: transparent; border: 2px solid transparent; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: 0.2s; color: var(--text-muted); }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .tab-content { display: none; animation: fadeIn 0.4s; }
+        .tab-content.active { display: block; }
+
+        /* TRADUCTION FEATURE (Text + Translate Button) */
+        .text-block { background: var(--bg); padding: 15px; border-radius: 12px; margin-bottom: 15px; position: relative; border: 1px solid var(--border); }
+        .text-block.de { background: #f0f7ff; border-color: #bcdbf7; }
+        .text-block p { margin-bottom: 10px; line-height: 1.6; }
+        .btn-translate { background: var(--primary); color: white; border: none; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        .btn-translate:hover { background: var(--primary-hover); }
+        .arabic-translation { display: none; margin-top: 15px; padding: 15px; background: #ecfdf3; border-radius: 10px; border-right: 4px solid #10b981; animation: slideDown 0.5s ease-in-out; color: #065f46; font-weight: 500; }
+        .arabic-translation.open { display: block; }
+
+        /* Quiz Styles */
+        .quiz-opt { display: block; width: 100%; padding: 12px; margin-top: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; text-align: right; transition: 0.1s; }
+        .quiz-opt:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .quiz-opt.correct { background: #22c55e; color: white; border-color: #22c55e; }
+        .quiz-opt.wrong { background: #ef4444; color: white; border-color: #ef4444; }
+        .quiz-opt.disabled { pointer-events: none; opacity: 0.6; }
+
+        /* Tutorial Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 999; }
+        .modal-content { background: var(--card); max-width: 600px; width: 90%; padding: 30px; border-radius: 25px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; animation: fadeIn 0.5s; }
+        .modal-content h2 { margin-bottom: 15px; }
+        .modal-content ul { list-style: none; padding: 0; }
+        .modal-content li { padding: 10px 0; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: center; }
+        .modal-close { margin-top: 20px; padding: 10px 25px; background: var(--primary); color: white; border: none; border-radius: 12px; width: 100%; cursor: pointer; font-size: 1.1rem; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header { flex-direction: column; align-items: stretch; text-align: center; }
+            .section-grid { grid-template-columns: repeat(2, 1fr); }
+            .tabs { justify-content: center; }
+            .tab-btn { padding: 6px 12px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+
+    <!-- Tutorial Modal -->
+    <div class="modal-overlay" id="tutorial-modal">
+        <div class="modal-content fade-in">
+            <h2>📖 تعليمات استخدام التطبيق</h2>
+            <p>مرحباً بك في منصة تعلم PuG. إليك كيفية الاستخدام:</p>
+            <ul>
+                <li>📂 <strong>الرئيسية:</strong> تحتوي على جميع الدروس. اضغط على الدرس لبدء القراءة.</li>
+                <li>🇩🇪 <strong>الدرس الألماني:</strong> ستجد النص الأساسي باللغة الألمانية. بجانبه زر <code>🌐 ترجمة</code> لمعرفة المعنى بالعربية.</li>
+                <li>📖 <strong>القاموس:</strong> يحتوي على جميع المصطلحات، اضغط عليها لقراءة شرح مفصل.</li>
+                <li>📝 <strong>الامتحان:</strong> اختبر نفسك بـ 50 سؤالاً. يصحح التطبيق إجابتك تلقائياً ويظهر لك نقاط الضعف.</li>
+                <li>🌙 <strong>الوضع الليلي:</strong> يمكنك تفعيله من زر القمر 🌙 في الأعلى للدراسة المريحة ليلاً.</li>
+            </ul>
+            <button class="modal-close" onclick="closeTutorial()">بدأ الدراسة الآن!</button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">📘 PuG Studien</div>
+        <div class="controls">
+            <button class="btn-icon" onclick="toggleDarkMode()" id="theme-toggle">🌙 الوضع الليلي</button>
+            <button class="btn-icon" onclick="openTutorial()">❓ مساعدة</button>
+        </div>
+        <div class="stats">
+            <div>نقاط: <span id="points">0</span></div>
+            <div>المستوى: <span id="level">1</span></div>
+            <div>التقدم: <span id="prog">0%</span></div>
+        </div>
+    </header>
+
+    <!-- Nav -->
+    <nav class="nav-bar">
+        <button class="nav-btn active" onclick="switchView('home')">🏠 الرئيسية</button>
+        <button class="nav-btn" onclick="switchView('glossar')">📖 القاموس</button>
+        <button class="nav-btn" onclick="switchView('exam')">📝 الامتحان</button>
+    </nav>
+
+    <!-- Home View -->
+    <div id="view-home" class="fade-in">
+        <div class="section-grid" id="section-list"></div>
+    </div>
+
+    <!-- Glossar View -->
+    <div id="view-glossar" class="hidden fade-in">
+        <div class="detail-panel">
+            <h3 style="margin-bottom:15px;">📖 القاموس الشامل</h3>
+            <input type="text" id="gloss-search" placeholder="ابحث عن مصطلح ألماني..." style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--border); margin-bottom:20px; background:var(--bg); color:var(--text);">
+            <div id="gloss-list"></div>
+        </div>
+    </div>
+
+    <!-- Exam View -->
+    <div id="view-exam" class="hidden fade-in">
+        <div class="detail-panel">
+            <h3>📝 الامتحان النهائي (50 سؤال)</h3>
+            <div id="exam-q-progress" style="font-weight:bold; margin:10px 0;">السؤال 1 من 50</div>
+            <div id="exam-q-text" style="font-size:1.2rem; margin-bottom:15px; min-height:50px;"></div>
+            <div id="exam-opts"></div>
+            <div id="exam-result" class="hidden" style="margin-top:20px; padding:15px; background:#ecfdf3; border-radius:12px;"></div>
+            <button id="exam-next-btn" class="hidden" onclick="nextExamQ()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:12px; cursor:pointer; margin-top:15px;">السؤال التالي</button>
+            <button id="exam-restart-btn" class="hidden" onclick="startExam()" style="width:100%; padding:12px; background:#ef4444; color:white; border:none; border-radius:12px; cursor:pointer; margin-top:10px;">إعادة الامتحان</button>
+        </div>
+    </div>
+
+    <!-- Detail View -->
+    <div id="view-detail" class="hidden fade-in">
+        <button onclick="switchView('home')" style="background:none; border:none; color:var(--primary); cursor:pointer; font-size:1rem; margin-bottom:15px;">&larr; العودة للقائمة</button>
+        <div id="detail-content"></div>
+    </div>
+
+</div>
+
+<script>
+    // ===================================================================================
+    // 1. DATA: Lessons with German & Arabic Translations Side by Side
+    // ===================================================================================
+    const LESSONS = {
+        "FDGO": {
+            de: "Die freiheitlich-demokratische Grundordnung (FDGO) ist das Fundament des Grundgesetzes. Sie schützt die Menschenwürde, die Volkssouveränität und die Gewaltenteilung. Der Staat handelt immer nach den Prinzipien des Rechtsstaates.",
+            ar: "النظام الديمقراطي الحر (FDGO) هو أساس القانون الأساسي الألماني. إنه يحمي كرامة الإنسان، وسيادة الشعب، وفصل السلطات. تتصرف الدولة دائماً وفقاً لمبادئ دولة القانون."
+        },
+        "Demokratie": {
+            de: "In der Demokratie geht alle Staatsgewalt vom Volke aus (Volkssouveränität). Die Bürger wählen in freien, gleichen und geheimen Wahlen ihre Vertreter. Die Opposition kontrolliert die Regierung und bringt eigene Vorschläge ein.",
+            ar: "في الديمقراطية، تنبع كل سلطة الدولة من الشعب (سيادة الشعب). ينتخب المواطنون ممثليهم في انتخابات حرة ومتساوية وسرية. المعارضة تراقب الحكومة وتقدم مقترحاتها الخاصة."
+        },
+        "Wahlen": {
+            de: "Wahlen finden alle vier Jahre statt. Grundsätze: allgemein, unmittelbar, frei, gleich und geheim. Die Erststimme wählt den Wahlkreiskandidaten (Mehrheitswahl), die Zweitstimme die Partei (Verhältniswahl).",
+            ar: "تجرى الانتخابات كل أربع سنوات. المبادئ: عامة، مباشرة، حرة، متساوية، وسرية. الصوت الأول يختار مرشح الدائرة الانتخابية (انتخاب الأغلبية)، والصوت الثاني يختار الحزب (الانتخاب النسبي)."
+        },
+        "Gewaltenteilung": {
+            de: "Die Gewaltenteilung teilt die Macht in Legislative (Parlament), Exekutive (Regierung) und Judikative (Gerichte). Sie ist eine Grundlage der Demokratie und schützt die Bürger vor Machtmissbrauch.",
+            ar: "فصل السلطات يقسم السلطة إلى تشريعية (البرلمان)، تنفيذية (الحكومة)، وقضائية (المحاكم). إنه أساس الديمقراطية ويحمي المواطنين من إساءة استخدام السلطة."
+        },
+        "Bundestag": {
+            de: "Der Bundestag ist das deutsche Parlament und wird alle vier Jahre vom Volk gewählt. Er beschließt Gesetze, wählt den Bundeskanzler und kontrolliert die Regierung.",
+            ar: "البوندستاغ هو البرلمان الألماني ويتم انتخابه كل أربع سنوات من قبل الشعب. يقر القوانين، ينتخب المستشار الاتحادي، ويراقب الحكومة."
+        }
+    };
+
+    // Glossary Data
+    const GLOSSARY = [
+        { term: "FDGO", de_def: "Freiheitlich-demokratische Grundordnung", ar_def: "النظام الديمقراطي الحر", ex: "Das Grundgesetz schützt die FDGO." },
+        { term: "Opposition", de_def: "Parteien, die nicht an der Macht sind", ar_def: "الأحزاب التي ليست في السلطة", ex: "Die Opposition kontrolliert die Regierung." },
+        { term: "Kanzler", de_def: "Der Regierungschef der BRD", ar_def: "رئيس الحكومة الألمانية", ex: "Der Kanzler bestimmt die Richtlinien der Politik." },
+        { term: "Bundesrat", de_def: "Vertretung der 16 Bundesländer", ar_def: "تمثيل الولايات الـ 16", ex: "Der Bundesrat stimmt neuen Gesetzen zu." },
+        { term: "Gewaltenteilung", de_def: "Machtteilung in Legislative, Exekutive, Judikative", ar_def: "تقسيم السلطة إلى تشريعية، تنفيذية، قضائية", ex: "Schützt vor Machtmissbrauch." }
+    ];
+
+    const SECTIONS = ["FDGO", "Demokratie", "Wahlen", "Gewaltenteilung", "Bundestag", "Bundesrat", "Opposition", "Koalition", "Föderalismus", "Grundgesetz Art. 20", "Sozialversicherungen", "Krankenversicherung", "Rentenversicherung", "Arbeitslosenversicherung", "Unfallversicherung", "Pflegeversicherung", "Kommunen", "Länder", "Bund", "Deutsche Geschichte"];
+
+    // ===================================================================================
+    // 2. STATE MANAGEMENT & UTILITIES
+    // ===================================================================================
+    let state = { progress: {}, points: 0, level: 1, darkMode: false };
+    function saveState() { localStorage.setItem('pug_advanced', JSON.stringify(state)); }
+    function loadState() {
+        const s = localStorage.getItem('pug_advanced');
+        if(s) { state = JSON.parse(s); } 
+        else { SECTIONS.forEach(sec => state.progress[sec] = false); }
+        if(state.darkMode) document.documentElement.setAttribute('data-theme', 'dark');
+        updateUI();
+        renderSections();
+    }
+    function updateUI() {
+        document.getElementById('points').innerText = state.points;
+        state.level = Math.floor(state.points / 50) + 1;
+        document.getElementById('level').innerText = state.level;
+        let done = Object.values(state.progress).filter(v=>v).length;
+        document.getElementById('prog').innerText = Math.round((done / SECTIONS.length)*100) + '%';
+    }
+
+    // ===================================================================================
+    // 3. TUTORIAL
+    // ===================================================================================
+    function closeTutorial() { document.getElementById('tutorial-modal').classList.add('hidden'); }
+    function openTutorial() { document.getElementById('tutorial-modal').classList.remove('hidden'); }
+    function toggleDarkMode() {
+        state.darkMode = !state.darkMode;
+        document.documentElement.setAttribute('data-theme', state.darkMode ? 'dark' : 'light');
+        document.getElementById('theme-toggle').innerText = state.darkMode ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي';
+        saveState();
+    }
+
+    // ===================================================================================
+    // 4. NAVIGATION & HOME
+    // ===================================================================================
+    function switchView(id) {
+        document.querySelectorAll('#app > div[id^="view-"]').forEach(el => el.classList.add('hidden'));
+        document.getElementById('view-' + id).classList.remove('hidden');
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        if(id === 'glossar') renderGlossar();
+        if(id === 'exam') startExam();
+    }
+
+    function renderSections() {
+        const grid = document.getElementById('section-list'); grid.innerHTML = '';
+        SECTIONS.forEach(sec => {
+            let el = document.createElement('div'); el.className = 'section-card';
+            if(state.progress[sec]) el.classList.add('completed');
+            el.innerHTML = `<div class="icon">${state.progress[sec] ? '✅' : '📘'}</div>
+                            <h4>${sec}</h4>`;
+            el.onclick = () => openDetail(sec);
+            grid.appendChild(el);
+        });
+    }
+
+    // ===================================================================================
+    // 5. DETAIL VIEW & TRANSLATION FEATURE
+    // ===================================================================================
+    function openDetail(name) {
+        switchView('detail');
+        const content = document.getElementById('detail-content');
+        const data = LESSONS[name];
+        const tabs = ["الشرح المطول", "الكلمات المهمة", "الاختبارات"];
+
+        let html = `<div class="detail-panel">
+            <h2>${name}</h2>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab(this, 'tab1-${name}')">${tabs[0]}</button>
+                <button class="tab-btn" onclick="switchTab(this, 'tab2-${name}')">${tabs[1]}</button>
+                <button class="tab-btn" onclick="switchTab(this, 'tab3-${name}')">${tabs[2]}</button>
+            </div>
+            
+            <div id="tab1-${name}" class="tab-content active">
+                <div class="text-block de">
+                    <p><strong>النص الألماني:</strong><br>${data.de}</p>
+                    <button class="btn-translate" onclick="toggleTranslation('${name}')">🌐 ترجمة للعربية</button>
+                    <div class="arabic-translation" id="trans-${name}">
+                        ${data.ar}
+                    </div>
+                </div>
+                <p style="margin-top:15px; color:var(--text-muted); font-size:0.9rem;"><i>اضغط على زر "ترجمة" لفهم كل جملة باللغة العربية.</i></p>
+            </div>
+
+            <div id="tab2-${name}" class="tab-content">
+                <h4>كلمات مفتاحية (تعلمها مع الترجمة):</h4>
+                <ul style="margin-top:15px; list-style:none; padding:0;">
+                    <li style="background:var(--bg); padding:10px; margin:5px 0; border-radius:8px; border:1px solid var(--border);">🇩🇪 Grundgesetz ➡️ 🇸🇦 القانون الأساسي</li>
+                    <li style="background:var(--bg); padding:10px; margin:5px 0; border-radius:8px; border:1px solid var(--border);">🇩🇪 Gewalt ➡️ 🇸🇦 السلطة / العنف (في سياق السلطة)</li>
+                </ul>
+            </div>
+            
+            <div id="tab3-${name}" class="tab-content">
+                <h4>أسئلة تدريبية</h4>
+                <div class="quiz-opt" onclick="alert('إجابة صحيحة تجريبية!')">A) إجابة خيار أول</div>
+                <div class="quiz-opt" onclick="alert('إجابة صحيحة تجريبية!')">B) إجابة خيار ثاني</div>
+            </div>
+        </div>`;
+        content.innerHTML = html;
+        
+        state.progress[name] = true;
+        state.points += 15;
+        saveState(); updateUI();
+    }
+
+    // Core function to toggle translation on demand
+    function toggleTranslation(id) {
+        const el = document.getElementById('trans-' + id);
+        el.classList.toggle('open');
+        if(el.classList.contains('open')) state.points += 5; saveState();
+    }
+
+    function switchTab(btn, id) {
+        let parent = btn.closest('.detail-panel');
+        parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active'); document.getElementById(id).classList.add('active');
+    }
+
+    // ===================================================================================
+    // 6. GLOSSARY
+    // ===================================================================================
+    function renderGlossar(q='') {
+        const list = document.getElementById('gloss-list'); list.innerHTML = '';
+        GLOSSARY.filter(g => g.term.includes(q) || g.ar_def.includes(q)).forEach(g => {
+            let el = document.createElement('div'); el.className = 'glossary-term';
+            el.style.cssText = "background:var(--bg); padding:15px; border-radius:12px; margin-bottom:10px; cursor:pointer; border:1px solid var(--border);";
+            el.innerHTML = `<strong>🇩🇪 ${g.term}</strong> - <em>${g.de_def}</em>
+                            <div style="margin-top:5px; font-size:0.9rem; color:var(--primary);">🇸🇦 ${g.ar_def}</div>
+                            <div style="display:none; margin-top:10px; padding:10px; background:var(--card); border-radius:8px;" id="gloss-${g.term}">
+                                <strong>مثال:</strong> ${g.ex}
+                            </div>`;
+            el.onclick = () => {
+                document.getElementById(`gloss-${g.term}`).style.display = (document.getElementById(`gloss-${g.term}`).style.display === 'none') ? 'block' : 'none';
+                state.points += 2; updateUI();
+            };
+            list.appendChild(el);
+        });
+    }
+    document.getElementById('gloss-search').addEventListener('input', e => renderGlossar(e.target.value));
+
+    // ===================================================================================
+    // 7. EXAM
+    // ===================================================================================
+    let examQuestions = [];
+    function startExam() {
+        examQuestions = [];
+        for(let i=0; i<50; i++) {
+            let g = GLOSSARY[Math.floor(Math.random() * GLOSSARY.length)];
+            examQuestions.push({
+                q: `Was bedeutet der Begriff "${g.term}"?`,
+                opts: [g.ar_def, "Definition B (Falsch)", "Definition C (Falsch)", "Definition D (Falsch)"],
+                correct: 0
+            });
+        }
+        examQuestions.sort(() => Math.random() - 0.5);
+        window.currentExamIdx = 0; window.examScore = 0; window.examAnswered = false;
+        document.getElementById('exam-result').classList.add('hidden');
+        document.getElementById('exam-next-btn').classList.add('hidden');
+        document.getElementById('exam-restart-btn').classList.add('hidden');
+        document.getElementById('exam-opts').innerHTML = '';
+        renderExamQ();
+    }
+
+    function renderExamQ() {
+        if(window.currentExamIdx >= 50) { finishExam(); return; }
+        window.examAnswered = false;
+        let q = examQuestions[window.currentExamIdx];
+        document.getElementById('exam-q-progress').innerText = `السؤال ${window.currentExamIdx+1} من 50`;
+        document.getElementById('exam-q-text').innerText = q.q;
+        
+        let optsDiv = document.getElementById('exam-opts'); optsDiv.innerHTML = '';
+        q.opts.forEach((o, i) => {
+            let btn = document.createElement('div'); btn.className = 'quiz-opt';
+            btn.innerText = o;
+            btn.onclick = () => {
+                if(window.examAnswered) return; window.examAnswered = true;
+                let opts = document.getElementById('exam-opts').children;
+                for(let j=0; j<opts.length; j++) {
+                    opts[j].classList.add('disabled');
+                    if(j === q.correct) opts[j].classList.add('correct');
+                    if(j === i && i !== q.correct) opts[j].classList.add('wrong');
+                }
+                if(i === q.correct) window.examScore++;
+                document.getElementById('exam-next-btn').classList.remove('hidden');
+            };
+            optsDiv.appendChild(btn);
+        });
+    }
+    
+    function nextExamQ() { window.currentExamIdx++; renderExamQ(); }
+
+    function finishExam() {
+        let pct = Math.round((window.examScore / 50) * 100);
+        let grade = pct >= 90 ? "ممتاز" : pct >= 70 ? "جيد" : pct >= 50 ? "مقبول" : "ضعيف";
+        let res = document.getElementById('exam-result'); res.classList.remove('hidden');
+        res.innerHTML = `<h3>تم إنهاء الامتحان!</h3>
+                         <p><strong>النتيجة:</strong> ${window.examScore}/50 (${pct}%)</p>
+                         <p><strong>التقدير:</strong> ${grade}</p>
+                         <p><strong>نقاط الضعف:</strong> ${pct < 50 ? 'نوصي بمراجعة جميع دروس FDGO مرة أخرى.' : 'مستوى ممتاز، استمر بالتعلم!'}</p>`;
+        document.getElementById('exam-next-btn').classList.add('hidden');
+        document.getElementById('exam-restart-btn').classList.remove('hidden');
+    }
+
+    // ===================================================================================
+    // 8. INIT
+    // ===================================================================================
+    window.onload = loadState;
+</script>
+</body>
+</html>أولا، أنا أشكرك على أصحاب الكود الذي قمت به وهو حقا. رائع جدا، ولكن قريب منك أن تكون الكود. كي. لغتين هي العربية والألمانية أيضا، أريد أن يكون هذا الموقع أكثر تفصيل وأكثر شرح. لا أريد فقط يقتصر على كلمات. أريد كل كلمة في الورقة تعريفه من الكتاب نفسه، ولقد أنا قمت بإرسال لك الورقة. والكتاب ونقسم التعلم لحالة وقسم الاختبارات أيضا، يكون يعني، وأريد أن يكون أكبر من ذلك في القدس من السطر يعني أن تستطيع أن تعمل أكثر من ذلك. أتمنى منك أن تقوم بذلك من أجلي وشكرا، لأنك موجود
